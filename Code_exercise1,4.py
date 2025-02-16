@@ -32,7 +32,7 @@ def visualize_Images(directory, nr_samples=5):
 #Function to get the sample images from each class
 def get_sample_images(directory, Classnr, num_samples=5):
     Class_path = os.path.join(directory, Classnr)
-    image_files = [f for f in os.listdir(Class_path) if f.endswith((".jpg"))]
+    image_files = [f for f in os.listdir(Class_path)]
     return random.sample(image_files, min(num_samples, len(image_files)))               #take random samples from data
 
 
