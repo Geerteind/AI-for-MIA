@@ -48,27 +48,39 @@ X_train /= 255
 X_val /= 255
 X_test /= 255
 
+#add the new classes to the y labels
+def map_labels(y):
+    mapping = {1: 0, 7: 0,  # Vertical digits (class 0)
+               0: 1, 6: 1, 8: 1, 9: 1,  # Loopy digits (class 1)
+               2: 2, 5: 2,  # Curly digits (class 2)
+               3: 3, 4: 3}  # Other (class 3)
+    return np.array([mapping[label] for label in y])
 
-# convert 1D class arrays to 10D class matrices
-y_train = to_categorical(y_train, 10)
-y_val = to_categorical(y_val, 10)
-y_test = to_categorical(y_test, 10)
+y_train, y_val, y_test = map_labels(y_train), map_labels(y_val), map_labels(y_test)
+
+# convert 1D class arrays to 4D class matrices
+y_train = to_categorical(y_train, 4)
+y_val = to_categorical(y_val, 4)
+y_test = to_categorical(y_test, 4)
+
 
 
 model = Sequential()
 # flatten the 28x28x1 pixel input images to a row of pixels (a 1D-array)
 model.add(Flatten(input_shape=(28,28,1)))
 # fully connected layer with 64 neurons and ReLU nonlinearity
-model.add(Dense(64, activation='relu'))
-# output layer with 10 nodes (one for each class) and softmax nonlinearity
-model.add(Dense(10, activation='softmax'))
+model.add(Dense(128, activation='relu'))
+model.add(Dense(128, activation='relu'))
+model.add(Dense(128, activation='relu'))
+# output layer with 4 nodes 1 for each class
+model.add(Dense(4, activation='softmax'))
 
 
 # compile the model
 model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
 
 # use this variable to name your model
-model_name="my_first_model"
+model_name="assignment_2_3_4classes"
 
 # create a way to monitor our model in Tensorboard
 tensorboard = TensorBoard("logs/" + model_name)
@@ -82,3 +94,4 @@ score = model.evaluate(X_test, y_test, verbose=0)
 
 print("Loss: ",score[0])
 print("Accuracy: ",score[1])
+
