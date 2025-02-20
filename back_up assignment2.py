@@ -11,6 +11,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 import tensorflow as tf
 
 
+
 # import required packages
 import numpy as np
 import matplotlib.pyplot as plt
@@ -20,6 +21,14 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Flatten, Dense
 from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.optimizers import SGD
+
+# define settings
+input_batch_size = 32
+input_epochs = 30
+input_verbose = 1
+optimizer = SGD(learning_rate=0.001, momentum=0.0)
+
 
 
 # load the dataset using the builtin Keras method
@@ -95,7 +104,7 @@ model.add(Dense(4, activation='softmax'))
 
 
 # compile the model
-model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
 # use this variable to name your model
 model_name="assignment_2_3_4classes"
@@ -104,11 +113,65 @@ model_name="assignment_2_3_4classes"
 tensorboard = TensorBoard("logs/" + model_name)
 
 # train the model
-model.fit(X_train, y_train, batch_size=32, epochs=10, verbose=1, validation_data=(X_val, y_val), callbacks=[tensorboard])
+#model.fit(X_train, y_train, batch_size=32, epochs=10, verbose=1, validation_data=(X_val, y_val), callbacks=[tensorboard])
 
+
+
+import matplotlib.pyplot as plt
+
+# Train the model and store the training history
+history = model.fit(X_train, y_train, batch_size=input_batch_size, epochs=input_epochs, verbose=input_verbose,
+                    validation_data=(X_val, y_val), callbacks=[tensorboard])
+
+# Evaluate the model on the test set to get test loss and accuracy
+test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=0)
+
+# Extract loss and accuracy from the training history
+train_loss = history.history['loss']
+train_accuracy = history.history['accuracy']
+val_loss = history.history['val_loss']
+val_accuracy = history.history['val_accuracy']
 
 score = model.evaluate(X_test, y_test, verbose=0)
 
+# Plot training and validation loss
+plt.figure(figsize=(12, 5))
+
+# Loss plot
+plt.subplot(1, 2, 1)
+plt.plot(train_loss, label='Training Loss')
+plt.plot(val_loss, label='Validation Loss')
+plt.axhline(y=test_loss, color='r', linestyle='--', label=f'Test Loss: {test_loss:.4f}')
+plt.title('Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+
+# Accuracy plot
+plt.subplot(1, 2, 2)
+plt.plot(train_accuracy, label='Training Accuracy')
+plt.plot(val_accuracy, label='Validation Accuracy')
+plt.axhline(y=test_accuracy, color='r', linestyle='--', label=f'Test Accuracy: {test_accuracy:.4f}')
+plt.title('Accuracy')
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.legend()
+
+# Show plots
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+print("Epochs: ",input_epochs)
+print("Batch size: ",input_batch_size)
+print("Verbose: ",input_verbose)
+print("Optimizer: ",optimizer)
+print("Test loss: ",test_loss)
+print("Test accuracy: ",test_accuracy)
 
 print("Loss: ",score[0])
 print("Accuracy: ",score[1])
+
