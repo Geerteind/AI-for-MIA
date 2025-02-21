@@ -22,12 +22,13 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Flatten, Dense
 from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.optimizers import SGD
+import matplotlib.pyplot as plt
 
 # define settings
 input_batch_size = 32
 input_epochs = 30
 input_verbose = 1
-optimizer = SGD(learning_rate=0.001, momentum=0.0)
+optimizer = SGD(learning_rate=0.001, momentum=0.0) #default optimizer is set to learning rate = 0.01 this was insufficient
 
 
 
@@ -117,7 +118,6 @@ tensorboard = TensorBoard("logs/" + model_name)
 
 
 
-import matplotlib.pyplot as plt
 
 # Train the model and store the training history
 history = model.fit(X_train, y_train, batch_size=input_batch_size, epochs=input_epochs, verbose=input_verbose,
@@ -165,6 +165,7 @@ plt.show()
 
 
 
+#print initial set settings and final scores
 print("Epochs: ",input_epochs)
 print("Batch size: ",input_batch_size)
 print("Verbose: ",input_verbose)
