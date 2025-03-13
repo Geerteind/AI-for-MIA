@@ -18,6 +18,7 @@ from tensorflow.keras.layers import Conv2D, MaxPool2D
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.callbacks import ModelCheckpoint, TensorBoard
 from tensorflow.keras.layers import Dropout
+import matplotlib.pyplot as plt
 
 
 # unused for now, to be used for ROC analysis
@@ -41,7 +42,7 @@ early_stopping = EarlyStopping(
 learning_rate_input = 0.01
 train_batch_size_input = 8
 val_batch_size_input = 8
-epochs_input = 30
+epochs_input = 15
 optimizer_input = SGD(learning_rate=learning_rate_input, momentum=0.90)
 
 
@@ -99,7 +100,7 @@ model = get_model()
 
 
 # get the data generators
-train_gen, val_gen = get_pcam_generators("C:\\Users\\20212287\\OneDrive - TU Eindhoven\\Documents\\COURSES\\OGOs\\AI")
+train_gen, val_gen = get_pcam_generators(r"C:\Users\20224105\Documents\TUe\Year 3\Q3\AI for MIA\Image set")
 
 
 
@@ -133,3 +134,32 @@ history = model.fit(train_gen, steps_per_epoch=train_steps,
 # ROC analysis
 
 # TODO Perform ROC analysis on the validation set
+def plot_roc_curve(y_true, y_pred, image_name, title="Receiver Operating Characteristic (ROC) Curve"):
+    """
+    Plots the ROC curve for given true labels and predicted probabilities.
+
+    Parameters:
+    - y_true: Array-like, true class labels.
+    - y_pred: Array-like, predicted probabilities for the positive class.
+    - title: (Optional) Title for the plot.
+    """
+    fpr, tpr, _ = roc_curve(y_true, y_pred)
+    roc_auc = auc(fpr, tpr)
+    print(roc_auc)
+    plt.figure(figsize=(8, 6))
+    plt.plot(fpr, tpr, color='blue', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
+    plt.plot([0, 1], [0, 1], color='gray', linestyle='--', lw=2)  # Diagonal line (random classifier)
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title(title)
+    plt.legend(loc='lower right')
+    plt.grid(True)
+    plt.savefig(image_name)
+    plt.show()
+    return
+
+guesses = model.predict(val_gen).ravel()
+y_true = val_gen.classes
+plot_roc_curve(y_true, guesses, "ROC_curve.png")
