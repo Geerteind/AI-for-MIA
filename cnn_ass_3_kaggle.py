@@ -85,6 +85,8 @@ def get_model(kernel_size=(3,3), pool_size=(4,4), first_filters=32, second_filte
      model.add(Flatten())
      model.add(Dropout(0.1))
 
+
+
      model.add(Dense(64, activation = 'relu'))
      model.add(Dense(1, activation = 'sigmoid'))
 
@@ -100,7 +102,7 @@ model = get_model()
 
 
 # get the data generators
-train_gen, val_gen = get_pcam_generators(r"C:\Users\20224105\Documents\TUe\Year 3\Q3\AI for MIA\Image set")
+train_gen, val_gen = get_pcam_generators(r"C:\Users\20212287\OneDrive - TU Eindhoven\Documents\COURSES\OGOs\AI")
 
 
 
@@ -163,3 +165,7 @@ def plot_roc_curve(y_true, y_pred, image_name, title="Receiver Operating Charact
 guesses = model.predict(val_gen).ravel()
 y_true = val_gen.classes
 plot_roc_curve(y_true, guesses, "ROC_curve.png")
+import seaborn as sns
+sns.histplot(guesses, bins=20, kde=True)
+plt.show()
+
