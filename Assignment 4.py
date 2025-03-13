@@ -8,6 +8,7 @@ Author: Mitko Veta
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}   
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 
 import numpy as np
@@ -23,9 +24,11 @@ from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2, preprocess_i
 def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
 
      # dataset parameters
-     train_path = os.path.join(base_dir, 'train+val', 'train')
-     valid_path = os.path.join(base_dir, 'train+val', 'valid')
-	 
+     train_path = r"C:\Python\AI for MIA\train+val\train"
+     #train_path = r"C:\Python\AI for MIA\train+val\train"
+     
+     valid_path = r"C:\Python\AI for MIA\train+val\valid"
+     #valid_path = r"C:\Python\AI for MIA\train+val\valid"
      # instantiate data generators
      datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
 
@@ -71,13 +74,12 @@ model.compile(SGD(learning_rate=0.001, momentum=0.95), loss = 'binary_crossentro
 model.summary()
 
 # get the data generators
-train_gen, val_gen = get_pcam_generators('/change/me/to/dataset/path')
-
+train_gen, val_gen = get_pcam_generators("C:\Python\AI for MIA\train+val")
 
 # save the model and weights
 model_name = 'my_first_transfer_model'
 model_filepath = model_name + '.json'
-weights_filepath = model_name + '_weights.hdf5'
+weights_filepath = model_name + '_weights.keras'
 
 model_json = model.to_json() # serialize model to JSON
 with open(model_filepath, 'w') as json_file:
@@ -101,3 +103,39 @@ history = model.fit(train_gen, steps_per_epoch=train_steps,
                     validation_steps=val_steps,
                     epochs=10,
                     callbacks=callbacks_list)
+
+# Plot training history
+def plot_training_history(history):
+    acc = history.history['accuracy']
+    val_acc = history.history['val_accuracy']
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    
+    epochs_range = range(1, len(acc) + 1)
+
+    # Create subplots
+    plt.figure(figsize=(12, 5))
+
+    # Accuracy plot
+    plt.subplot(1, 2, 1)
+    plt.plot(epochs_range, acc, 'b', label='Training Accuracy')
+    plt.plot(epochs_range, val_acc, 'r', label='Validation Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.title('Training and Validation Accuracy')
+    plt.legend()
+
+    # Loss plot
+    plt.subplot(1, 2, 2)
+    plt.plot(epochs_range, loss, 'b', label='Training Loss')
+    plt.plot(epochs_range, val_loss, 'r', label='Validation Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.title('Training and Validation Loss')
+    plt.legend()
+
+    # Show plots
+    plt.show()
+
+# Call the function to plot
+plot_training_history(history)
