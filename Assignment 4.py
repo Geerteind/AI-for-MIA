@@ -24,11 +24,8 @@ from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2, preprocess_i
 def get_pcam_generators(base_dir, train_batch_size=32, val_batch_size=32):
 
      # dataset parameters
-     train_path = r"C:\Python\AI for MIA\train+val\train"
-     #train_path = r"C:\Python\AI for MIA\train+val\train"
-     
-     valid_path = r"C:\Python\AI for MIA\train+val\valid"
-     #valid_path = r"C:\Python\AI for MIA\train+val\valid"
+     train_path = r"INSERT TRAINING DATA PATH HERE"
+     valid_path = r"INSERT VALIDATION DATA PATH HERE"
      # instantiate data generators
      datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
 
@@ -74,7 +71,7 @@ model.compile(SGD(learning_rate=0.001, momentum=0.95), loss = 'binary_crossentro
 model.summary()
 
 # get the data generators
-train_gen, val_gen = get_pcam_generators("C:\Python\AI for MIA\train+val")
+train_gen, val_gen = get_pcam_generators(r"INSERT DATA PATH HERE")
 
 # save the model and weights
 model_name = 'my_first_transfer_model'
@@ -113,7 +110,6 @@ def plot_training_history(history):
     
     epochs_range = range(1, len(acc) + 1)
 
-    # Create subplots
     plt.figure(figsize=(12, 5))
 
     # Accuracy plot
@@ -134,8 +130,6 @@ def plot_training_history(history):
     plt.title('Training and Validation Loss')
     plt.legend()
 
-    # Show plots
     plt.show()
 
-# Call the function to plot
 plot_training_history(history)
